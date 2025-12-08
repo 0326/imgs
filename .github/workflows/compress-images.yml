@@ -1,0 +1,39 @@
+name: Compress Images
+
+on:
+  push:
+    paths:
+      - 'blog/**'
+  pull_request:
+    paths:
+      - 'blog/**'
+
+jobs:
+  compress-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pillow
+          sudo apt-get update
+          sudo apt-get install -y pngquant jpegoptim optipng
+
+      - name: Compress images
+        run: python compress_images.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Compress images automatically'
+          file_pattern: 'q50/** thumb/**'
+          commit_options: '--no-verify'
+          skip_dirty_check: false
