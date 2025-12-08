@@ -8,12 +8,17 @@ on:
     paths:
       - 'blog/**'
 
+permissions:
+  contents: write
+
 jobs:
   compress-images:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,3 +42,4 @@ jobs:
           file_pattern: 'q50/** thumb/**'
           commit_options: '--no-verify'
           skip_dirty_check: false
+          push_options: '--force-with-lease'
